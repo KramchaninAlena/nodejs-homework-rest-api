@@ -1,25 +1,45 @@
-const express = require('express')
+const express = require("express");
 
-const router = express.Router()
+const router = express.Router();
 
-router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+const contacts = require("../../models/contacts");
 
-router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+const { HttpError } = require("../../helpers");
 
-router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get("/", async (req, res, next) => {
+  try {
+    const allContacts = await contacts.listContacts();
+    res.json(allContacts);
+  } catch (error) {
+    next(error);
+  }
+});
 
-router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get("/:contactId", async (req, res, next) => {
+  try {
+    const { contactId } = req.params;
+    const oneContact = await contacts.getContactById(contactId);
 
-router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+    if (!oneContact) {
+      throw HttpError(404, "Not found");
+    }
 
-module.exports = router
+    res.json(oneContact);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/", async (req, res, next) => {
+  res.json({ message: "template message" });
+});
+
+router.delete("/:contactId", async (req, res, next) => {
+  res.json({ message: "template message" });
+});
+
+router.put("/:contactId", async (req, res, next) => {
+  res.json({ message: "template message" });
+});
+
+module.exports = router;
