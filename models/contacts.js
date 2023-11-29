@@ -39,17 +39,6 @@ const addContact = async (body) => {
   return newContact;
 };
 
-// const updateById = async(id, data) => {
-//   const books = await getAll();
-//   const index = books.findIndex(item => item.id === id);
-//   if(index === -1){
-//       return null;
-//   }
-//   books[index] = {id, ...data};
-//   await fs.writeFile(booksPath, JSON.stringify(books, null, 2));
-//   return books[index];
-// }
-
 const updateContact = async (contactId, body) => {
   const contacts = await listContacts();
   const index = contacts.findIndex((el) => el.id === contactId);
