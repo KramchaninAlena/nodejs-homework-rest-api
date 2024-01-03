@@ -70,19 +70,26 @@ const getCurrent = async (req, res) => {
   res.json({ email, subscription });
 };
 
+const updateSubscription = async (req, res) => {
+  const { subscription } = req.body;
+  req.user.subscription = subscription;
+  await req.user.save();
+  res.json({
+    message: "Subscription updated successfully",
+    subscription: req.user.subscription,
+  });
+};
+
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
   const { path: tempUpload, originalname } = req.file;
   const filename = `${_id}_${originalname}`;
   const resultUpload = path.join(avatarsDir, filename);
-  await fs.rename(tempUpload, resultUpload);
-  Jimp.read(resultUpload)
-    .then((image) => {
-      image.resize(250, 250).write(resultUpload);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  // await fs.rename(tempUpload, resultUpload);
+  const image = await Jimp.read(tempUpload);
+  image.resize(250, 250);
+  await image.writeAsync(resultUpload);
+
   const avatarUrl = path.join("avatars", filename);
   await User.findByIdAndUpdate(_id, { avatarUrl });
 
@@ -96,5 +103,6 @@ module.exports = {
   login: ctrlWrapper(login),
   logout: ctrlWrapper(logout),
   getCurrent: ctrlWrapper(getCurrent),
+  updateSubscription: ctrlWrapper(updateSubscription),
   updateAvatar: ctrlWrapper(updateAvatar),
 };
