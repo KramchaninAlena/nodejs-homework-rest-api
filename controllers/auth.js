@@ -80,6 +80,11 @@ const updateAvatar = async (req, res) => {
   image.resize(250, 250);
   await image.writeAsync(resultUpload);
 
+  fs.unlink(tempUpload, (err) => {
+    if (err) throw err;
+    console.log("file deleted");
+  });
+
   const avatarUrl = path.join("avatars", filename);
   await User.findByIdAndUpdate(_id, { avatarUrl });
 
